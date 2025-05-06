@@ -61,7 +61,7 @@ export default function App() {
 
   useEffect(() => {
     fetchPredictions();
-    const interval = setInterval(fetchPredictions, 2000);
+    const interval = setInterval(fetchPredictions, 5000);
     return () => clearInterval(interval);
   }, []);
 
