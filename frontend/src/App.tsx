@@ -38,18 +38,32 @@ export default function App() {
         "https://water-predictor-backend.onrender.com/predict"
       );
       const result = response.data;
-
+  
+      // Guard clause: Skip update if essential values are missing
+      const requiredFields = [
+        result.temperature,
+        result.ph,
+        result.tds,
+        result.turbidity,
+        result["Dissolved Oxygen (DO)"],
+        result["Heavy Metal Concentration"],
+      ];
+      if (requiredFields.some((val) => val === undefined || val === "")) {
+        console.warn("❌ Skipping chart update due to missing data:", result);
+        return;
+      }
+  
       setData(result);
       setLastUpdated(new Date().toLocaleTimeString());
-
+  
       setChartData((prev) => [
         ...prev.slice(-19),
         {
           time: new Date().toLocaleTimeString(),
-          temperature: result.temperature,
-          ph: result.ph,
-          tds: result.tds,
-          turbidity: result.turbidity,
+          temperature: parseFloat(result.temperature),
+          ph: parseFloat(result.ph),
+          tds: parseFloat(result.tds),
+          turbidity: parseFloat(result.turbidity),
           do: parseFloat(result["Dissolved Oxygen (DO)"]),
           metal: metalLevelToNumber(result["Heavy Metal Concentration"]),
         },
